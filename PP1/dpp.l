@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>
 #include <map>
-extern "C" int yylex();
 using namespace std;
 std::map<std::string, std::string> macros;
 int state = 1;
@@ -93,7 +92,3 @@ int number_line = 1;
   }
 }
 %%
-
-/* int main(){
-  yylex();
-} */
