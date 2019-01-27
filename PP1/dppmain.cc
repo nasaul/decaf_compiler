@@ -1,9 +1,9 @@
 /* File: dppmain.cc
  * ----------------
- * This file defines the main() routine for the preprocessor, 
+ * This file defines the main() routine for the preprocessor,
  * the filtering tool which runs before the compiler.
  */
- 
+
 #include "scanner.h"
 #include <stdio.h>
 
@@ -19,6 +19,7 @@
  */
 int main(int argc, char *argv[])
 {
+  yylex();
   int ch;
   while ((ch = getc(stdin)) != EOF)
     putc(ch, stdout);
