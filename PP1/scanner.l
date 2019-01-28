@@ -160,9 +160,8 @@ true|false {
 
 " " { }
 /* Caracteres no reconocidos */
-. {
-ReportError::UnrecogChar(&yylloc, *yytext);
-}
+. {ReportError::UnrecogChar(&yylloc, *yytext);}
+
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
  * of the User Subroutines section. All text from here to the end of the
