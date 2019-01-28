@@ -36,8 +36,11 @@ int number_line = 1;
 }
   /* Termina comentario multilinea */
 .*"*/" {
-  /* Estado natural */
-  state = 1;
+  if(state == 0){
+    state = 1;
+  } else {
+    printf("%s\n", yytext);
+  }
   break;
 }
   /* Definición de macros */
