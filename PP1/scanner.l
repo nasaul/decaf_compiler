@@ -125,7 +125,7 @@ true|false {
 }
 
 \"[^\n\"]* {
-  ReportError::UntermString(&&yylloc, yytext);
+  ReportError::UntermString(&yylloc, yytext);
 }
 
   /* Cuenta lineas */
