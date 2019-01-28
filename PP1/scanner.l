@@ -101,6 +101,12 @@ true|false {
   return T_BoolConstant;
 }
 
+\n {
+  yyloc.first_line++;
+  yyloc.last_column = 0;
+}
+
+
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
  * of the User Subroutines section. All text from here to the end of the
@@ -123,6 +129,7 @@ true|false {
  */
 void InitScanner()
 {
+    yyloc.first_line = 1;
     PrintDebug("lex", "Initializing scanner");
     yy_flex_debug = false;
 }
