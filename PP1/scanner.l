@@ -152,6 +152,10 @@ true|false {
 ")"  {return ')';}
 "{"  {return '{';}
 "}"  {return '}';}
+  /* Caracteres no reconocidos */
+. {
+  ReportError::UntermString(&yylloc, yytext);
+}
   /* Cuenta lineas */
 \n {
   yylloc.first_line++;
