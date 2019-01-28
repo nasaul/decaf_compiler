@@ -102,8 +102,8 @@ true|false {
 }
 
 \n {
-  yyloc.first_line++;
-  yyloc.last_column = 0;
+  yylloc.first_line++;
+  yylloc.last_column = 0;
 }
 
 
@@ -129,7 +129,7 @@ true|false {
  */
 void InitScanner()
 {
-    yyloc.first_line = 1;
+    yylloc.first_line = 1;
     PrintDebug("lex", "Initializing scanner");
     yy_flex_debug = false;
 }
