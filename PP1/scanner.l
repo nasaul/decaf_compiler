@@ -119,9 +119,13 @@ true|false {
 }
 
   /* String */
-\"[^\n\"]\" {
+\"[^\n\"]*\" {
   yylval.stringConstant = strdup(yytext);
   return T_StringConstant;
+}
+
+\"[^\n\"]* {
+  ReportError::UntermString(&&yylloc, yytext);
 }
 
   /* Cuenta lineas */
