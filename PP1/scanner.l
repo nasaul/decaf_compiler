@@ -119,7 +119,7 @@ true|false {
 }
 
   /* String */
-\"[.*]\" {
+\"[^\n\"]\" {
   yylval.stringConstant = strdup(yytext);
   return T_StringConstant;
 }
