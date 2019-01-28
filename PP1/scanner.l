@@ -142,4 +142,6 @@ void InitScanner()
  */
 static void DoBeforeEachAction()
 {
+  yylloc.first_column = yylloc.last_column + 1;
+  yylloc.last_column = yylloc.first_column + yyleng - 1;
 }
