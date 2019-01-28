@@ -60,6 +60,7 @@ static void DoBeforeEachAction();
  /* All patterns and actions should be placed between the start and stop
   * %% markers which delimit the Rules section.
   */
+  /* Keywords */
 "void"        {return T_Void; }
 "int"	        {return T_Int; }
 "double"	    {return T_Double; }
@@ -80,6 +81,16 @@ static void DoBeforeEachAction();
 "New"         {return T_New; }
 "NewArray"    {return T_NewArray; }
 
+  /* Identifiers */
+[a-zA-Z][a-zA-Z0-9\_]* {
+  if(yyleng > 31){
+    ReportError::LongIdentifier(yylloc, yytext);
+  } else {
+    strncpy(yylval.identifier, yytext, MaxIdentLen);
+    return T_Identifier;
+  }
+
+}
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning

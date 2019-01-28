@@ -6,6 +6,7 @@
 
 #include "scanner.h"
 #include <stdio.h>
+// char yylex ();
 
 /* Function: main()
  * ----------------
@@ -20,8 +21,5 @@
 int main(int argc, char *argv[])
 {
   yylex();
-  int ch;
-  while ((ch = getc(stdin)) != EOF)
-    putc(ch, stdout);
   return 0;
 }
