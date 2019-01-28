@@ -159,8 +159,8 @@ true|false {
 }
 
 " " { }
-/* Caracteres no reconocidos */
-. {ReportError::UnrecogChar(&yylloc, *yytext);}
+  /* Caracteres no reconocidos */
+. {ReportError::UnrecogChar(&yylloc, *yytext); }
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
