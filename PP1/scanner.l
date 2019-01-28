@@ -152,19 +152,17 @@ true|false {
 ")"  {return ')';}
 "{"  {return '{';}
 "}"  {return '}';}
-  /* Caracteres no reconocidos */
-. {
-  ReportError::UnrecogChar(&yylloc, *yytext);
-}
   /* Cuenta lineas */
 \n {
   yylloc.first_line++;
   yylloc.last_column = 0;
 }
 
-" " {}
-
-
+" " { }
+/* Caracteres no reconocidos */
+. {
+ReportError::UnrecogChar(&yylloc, *yytext);
+}
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
  * of the User Subroutines section. All text from here to the end of the
