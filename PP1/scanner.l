@@ -117,9 +117,9 @@ true|false {
   yylval.doubleConstant = atof(yytext);
   return T_DoubleConstant;
 }
-  /* String */
 
-\"[.*\n]\" {
+  /* String */
+\"[.*]\" {
   yylval.stringConstant = strdup(yytext);
   return T_StringConstant;
 }
