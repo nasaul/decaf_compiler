@@ -162,6 +162,8 @@ true|false {
   yylloc.last_column = 0;
 }
 
+" " {}
+
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
