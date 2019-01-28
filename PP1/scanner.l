@@ -84,12 +84,21 @@ static void DoBeforeEachAction();
   /* Identifiers */
 [a-zA-Z][a-zA-Z0-9\_]* {
   if(yyleng > 31){
-    ReportError::LongIdentifier(yylloc, yytext);
+    ReportError::LongIdentifier(&yylloc, yytext);
   } else {
     strncpy(yylval.identifier, yytext, MaxIdentLen);
     return T_Identifier;
   }
 
+}
+
+true|false {
+  if(strcmp(yytext, "true") == 0){
+    yylval.boolConstant = false;
+  } else {
+    yylval.boolConstant = true;
+  }
+  return T_BoolConstant;
 }
 
 %%
