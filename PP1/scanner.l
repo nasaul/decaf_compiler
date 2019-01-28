@@ -113,7 +113,7 @@ true|false {
 }
 
   /* Double constant */
-([0-9]+"."[0-9]*)|([0-9]+"."[Ee][+-]?[0-9]+) {
+([0-9]+"."[0-9]*)|([0-9]+"."[0-9]*[Ee][+-]?[0-9]+) {
   yylval.doubleConstant = atof(yytext);
   return T_DoubleConstant;
 }
