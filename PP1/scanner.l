@@ -154,7 +154,7 @@ true|false {
 "}"  {return '}';}
   /* Caracteres no reconocidos */
 . {
-  ReportError::UntermString(&yylloc, yytext);
+  ReportError::UnrecogChar(&yylloc, yytext);
 }
   /* Cuenta lineas */
 \n {
