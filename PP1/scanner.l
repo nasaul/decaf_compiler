@@ -107,7 +107,7 @@ true|false {
   return T_IntConstant;
 }
 
-0[Xx][0-9a-fA-f] {
+0[Xx][0-9a-fA-f]+ {
   yylval.integerConstant = strtol(yytext, NULL, 16);
   return T_IntConstant;
 }
