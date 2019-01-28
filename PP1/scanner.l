@@ -142,8 +142,8 @@ true|false {
 "!=" {return T_NotEqual;}
 "&&" {return T_And;}
 "||" {return T_Or;}
-"!"  {return '!'}
-";"  {return ';'}
+"!"  {return '!';}
+";"  {return ';';}
 ","  {return ',';}
 "."  {return '.';}
 "["  {return '[';}
