@@ -22,6 +22,17 @@ int number_line = 1;
   printf("%s\n", line_wo_com.c_str());
   break;
 }
+
+.*"/*".*"*/" {
+  /* Estado 0 para indicar que estamos dentro de comentarios */
+  string  line_w_com, line_wo_com;
+  int id_comment;
+  line_w_com  = strdup(yytext);
+  id_comment  = line_w_com.find("/*");
+  line_wo_com = line_w_com.substr(0, id_comment);
+  printf("%s\n", line_wo_com.c_str());
+  break;
+}
   /* Inicia comentario multilinea */
 .*"/*".* {
   /* Estado 0 para indicar que estamos dentro de comentarios */
