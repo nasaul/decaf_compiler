@@ -123,11 +123,35 @@ true|false {
   yylval.stringConstant = strdup(yytext);
   return T_StringConstant;
 }
-
+  /* String sin cerrar */
 \"[^\n\"]* {
   ReportError::UntermString(&yylloc, yytext);
 }
-
+  /* Operadores */
+"+"  {return '+';}
+"-"  {return '-';}
+"*"  {return '*';}
+"/"  {return '/';}
+"%"  {return '%';}
+"<"  {return '<';}
+"<=" {return T_LessEqual;}
+">"  {return '>';}
+">=" {return T_GreaterEqual;}
+"="  {return '=';}
+"==" {return T_Equal;}
+"!=" {return T_NotEqual;}
+"&&" {return T_And;}
+"||" {return T_Or;}
+"!"  {return '!'}
+";"  {return ';'}
+","  {return ',';}
+"."  {return '.';}
+"["  {return '[';}
+"]"  {return ']';}
+"("  {return '(';}
+")"  {return ')';}
+"{"  {return '{';}
+"}"  {return '}';}
   /* Cuenta lineas */
 \n {
   yylloc.first_line++;
