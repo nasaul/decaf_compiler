@@ -83,7 +83,7 @@ static void DoBeforeEachAction();
 
   /* Identifiers */
 [a-zA-Z][a-zA-Z0-9\_]* {
-  if(yyleng > 31){
+  if(yyleng > MaxIdentLen){
     ReportError::LongIdentifier(&yylloc, yytext);
   } else {
     strncpy(yylval.identifier, yytext, MaxIdentLen);
@@ -91,16 +91,40 @@ static void DoBeforeEachAction();
   }
 
 }
-
+  /* Booleans */
 true|false {
   if(strcmp(yytext, "true") == 0){
-    yylval.boolConstant = false;
-  } else {
     yylval.boolConstant = true;
+  } else {
+    yylval.boolConstant = false;
   }
   return T_BoolConstant;
 }
 
+  /* Integers */
+[0-9]+ {
+  yylval.integerConstant = atoi(yytext);
+  return T_IntConstant;
+}
+
+0[Xx][0-9a-fA-f] {
+  yylval.integerConstant = strtol(yytext, NULL, 16);
+  return T_IntConstant;
+}
+
+  /* Double constant */
+([0-9]+"."[0-9]*)|([0-9]+"."[Ee][+-]?[0-9]+) {
+  yylval.doubleConstant = atof(yytext);
+  return T_DoubleConstant;
+}
+  /* String */
+
+\"[.*\n]\" {
+  yylval.stringConstant = strdup(yytext);
+  return T_StringConstant;
+}
+
+  /* Cuenta lineas */
 \n {
   yylloc.first_line++;
   yylloc.last_column = 0;
@@ -143,5 +167,5 @@ void InitScanner()
 static void DoBeforeEachAction()
 {
   yylloc.first_column = yylloc.last_column + 1;
-  yylloc.last_column = yylloc.first_column + yyleng - 1;
+  yylloc.last_column  = yylloc.first_column + yyleng - 1;
 }
