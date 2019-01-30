@@ -19,7 +19,6 @@ int number_line = 1;
     line_w_com  = strdup(yytext);
     id_comment  = line_w_com.find("//");
     line_wo_com = line_w_com.substr(0, id_comment);
-    printf("Comentario una linea");
     printf("%s\n", line_wo_com.c_str());
     break;
   } else {
@@ -34,7 +33,6 @@ int number_line = 1;
   line_w_com  = strdup(yytext);
   id_comment  = line_w_com.find("/*");
   line_wo_com = line_w_com.substr(0, id_comment);
-  printf("Inicia y termina comentario multilinea");
   printf("%s\n", line_wo_com.c_str());
   break;
 }
@@ -47,13 +45,11 @@ int number_line = 1;
   line_w_com  = strdup(yytext);
   id_comment  = line_w_com.find("/*");
   line_wo_com = line_w_com.substr(0, id_comment);
-  printf("Inicia comentario multilinea");
   printf("%s\n", line_wo_com.c_str());
   break;
 }
   /* Termina comentario multilinea */
 .*"*/" {
-  printf("Termina comentario");
   if(state == 0){
     state = 1;
   } else {
@@ -93,7 +89,6 @@ int number_line = 1;
 }
   /* Todo lo demas */
 .* {
-  printf("Todo lo demas");
   number_line++;
   /* Ignora texto que está dentro de comentarios multilinea */
   if(state == 0){
