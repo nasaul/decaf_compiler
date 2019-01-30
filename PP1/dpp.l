@@ -67,6 +67,7 @@ int number_line = 1;
   id_space       = text_wo_define.find(" ");
   name           = text_wo_define.substr(0, id_space);
   replacement    = text_wo_define.substr(id_space);
+  printf("%s", replacement);
   macros[name]   = replacement;
 }
   /* Malas definiciones de macros */
