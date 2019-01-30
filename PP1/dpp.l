@@ -91,6 +91,9 @@ int number_line = 1;
   /* Todo lo demas */
 \n {
   number_line++;
+}
+
+.* {
   /* Ignora texto que está dentro de comentarios multilinea */
   if(state == 0){
       break;
