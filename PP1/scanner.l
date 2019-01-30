@@ -60,6 +60,7 @@ static void DoBeforeEachAction();
  /* All patterns and actions should be placed between the start and stop
   * %% markers which delimit the Rules section.
   */
+
   /* Keywords */
 "void"        {return T_Void; }
 "int"	        {return T_Int; }
@@ -80,6 +81,9 @@ static void DoBeforeEachAction();
 "break"       {return T_Break; }
 "New"         {return T_New; }
 "NewArray"    {return T_NewArray; }
+"true"        {yylval.boolConstant = true; return T_BoolConstant;}
+"false"       {yylval.boolConstant = false; return T_BoolConstant;}
+
 
   /* Identifiers */
 [a-zA-Z][a-zA-Z0-9\_]* {
@@ -90,15 +94,6 @@ static void DoBeforeEachAction();
     return T_Identifier;
   }
 
-}
-  /* Booleans */
-true|false {
-  if(strcmp(yytext, "true") == 0){
-    yylval.boolConstant = true;
-  } else {
-    yylval.boolConstant = false;
-  }
-  return T_BoolConstant;
 }
 
   /* Integers */

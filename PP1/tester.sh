@@ -13,5 +13,8 @@ done
 programas=($(ls samples | grep -oP '.*\.' | uniq))
 
 for item in ${programas[@]}; do
+  echo Archivo: $item
   diff --text "samples/"$item"out" "samples/"$item"out1"
 done
+
+#rm samples/*.out1
