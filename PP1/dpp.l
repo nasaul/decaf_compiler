@@ -67,8 +67,7 @@ int number_line = 1;
   id_space       = text_wo_define.find(" ");
   name           = text_wo_define.substr(0, id_space);
   replacement    = text_wo_define.substr(id_space);
-  printf("%s", replacement);
-  macros[name]   = replacement;
+  macros.insert(make_pair(name, replacement));
 }
   /* Malas definiciones de macros */
 "#define".* {
@@ -85,8 +84,8 @@ int number_line = 1;
 		ReportError::InvalidDirective(number_line);
     /* printf("Directiva invalida\n"); */
 	} else {
-		replacement = macros[name];
-		printf("%s", replacement.c_str());
+		replacement = macros.find(name)->second;
+		printf("%s", replacement.substr(1).c_str());
   }
 }
   /* Todo lo demas */
