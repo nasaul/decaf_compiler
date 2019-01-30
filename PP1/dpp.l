@@ -13,14 +13,18 @@ int number_line = 1;
 
   /* Inicia comentario una linea */
 .*"//".*  {
-  string  line_w_com, line_wo_com;
-  int id_comment;
-  line_w_com  = strdup(yytext);
-  id_comment  = line_w_com.find("//");
-  line_wo_com = line_w_com.substr(0, id_comment);
-  printf("Comentario una linea");
-  printf("%s\n", line_wo_com.c_str());
-  break;
+  if(state = 1) {
+    string  line_w_com, line_wo_com;
+    int id_comment;
+    line_w_com  = strdup(yytext);
+    id_comment  = line_w_com.find("//");
+    line_wo_com = line_w_com.substr(0, id_comment);
+    printf("Comentario una linea");
+    printf("%s\n", line_wo_com.c_str());
+    break;
+  } else {
+    break;
+  }
 }
 
 .*"/*".*"*/" {
