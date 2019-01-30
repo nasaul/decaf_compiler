@@ -84,8 +84,8 @@ int number_line = 1;
 		ReportError::InvalidDirective(number_line);
     /* printf("Directiva invalida\n"); */
 	} else {
-		replacement = macros.find(name)->second;
-		printf("%s", replacement.substr(1).c_str());
+		replacement = macros[name];
+		printf("%s", replacement.c_str());
   }
 }
   /* Todo lo demas */
