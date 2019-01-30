@@ -11,7 +11,7 @@ int number_line = 1;
 
 %%
 
-\n {number_line++;}
+\n {number_line++; printf("\n");}
   /* Inicia comentario una linea */
 .*"//".*  {
   string  line_w_com, line_wo_com;
