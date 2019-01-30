@@ -42,6 +42,8 @@ int number_line = 1;
   if(state == 0){
     state = 1;
     break;
+  } else {
+    printf("%s", yytext);
   } 
   break;
 }
