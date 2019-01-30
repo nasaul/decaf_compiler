@@ -46,7 +46,7 @@ int number_line = 1;
 
   /* Inicia comentario una linea */
 .*"//".*  {
-if(state = 1) {
+  if(state = 1) {
   string line_w_com, line_wo_com;
   int id_comment;
   line_w_com  = strdup(yytext);
