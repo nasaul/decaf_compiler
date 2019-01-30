@@ -67,29 +67,29 @@ int number_line = 1;
   id_space       = text_wo_define.find(" ");
   name           = text_wo_define.substr(0, id_space);
   replacement    = text_wo_define.substr(id_space);
-  macros.insert(make_pair(name, replacement));
+  macros.insert(std::pair<std::string, std::string>(name, replacement));
 }
+
+  /* Aplicación de macros */
+"#"[A-Z]+ {
+  string text, name;
+	text        = strdup(yytext);
+	name        = text.substr(1);
+	if(macros.find(name) == macros.end()){
+		ReportError::InvalidDirective(number_line);
+	} else {
+		printf("%s", (macros.find(name)->second).substr(1).c_str());
+  }
+}
+
   /* Malas definiciones de macros */
 "#define".* {
   /* printf("Mal macro\n"); */
   ReportError::InvalidDirective(number_line);
 }
 
-  /* Aplicación de macros */
-"#"[A-Z]+ {
-  string text, name, replacement;
-	text = strdup(yytext);
-	name = text.substr(1);
-	if(macros.find(name) == macros.end()){
-		ReportError::InvalidDirective(number_line);
-    /* printf("Directiva invalida\n"); */
-	} else {
-		replacement = macros.find(name)->second;
-		printf("%s", replacement.substr(1).c_str());
-  }
-}
   /* Todo lo demas */
-.* {
+\n {
   number_line++;
   /* Ignora texto que está dentro de comentarios multilinea */
   if(state == 0){
