@@ -11,9 +11,7 @@ int number_line = 1;
 
 %%
 
-
 .*"/*".*"*/" {
-  /* Estado 0 para indicar que estamos dentro de comentarios */
   string  line_w_com, line_wo_com;
   int id_comment;
   line_w_com  = strdup(yytext);
@@ -22,25 +20,29 @@ int number_line = 1;
   printf("%s", line_wo_com.c_str());
   break;
 }
+
   /* Inicia comentario multilinea */
 .*"/*".* {
   /* Estado 0 para indicar que estamos dentro de comentarios */
-  state = 0;
-  string  line_w_com, line_wo_com;
-  int id_comment;
-  line_w_com  = strdup(yytext);
-  id_comment  = line_w_com.find("/*");
-  line_wo_com = line_w_com.substr(0, id_comment);
-  printf("%s", line_wo_com.c_str());
-  break;
+    state = 0;
+    string  line_w_com, line_wo_com;
+    int id_comment;
+    line_w_com  = strdup(yytext);
+    id_comment  = line_w_com.find("/*");
+    if(id_comment == 0){
+      break;
+    } else { 
+      line_wo_com = line_w_com.substr(0, id_comment);
+      printf("%s", line_wo_com.c_str());
+      break;
+   }
 }
   /* Termina comentario multilinea */
 .*"*/" {
   if(state == 0){
     state = 1;
-  } else {
-    printf("%s", yytext);
-  }
+    break;
+  } 
   break;
 }
 
@@ -54,9 +56,9 @@ int number_line = 1;
   line_wo_com = line_w_com.substr(0, id_comment);
   printf("%s", line_wo_com.c_str());
   break;
-} else {
+  } else {
   break;
-}
+  }
 }
   /* Definición de macros */
 "#define "[A-Z]+" ".* {
@@ -91,14 +93,20 @@ int number_line = 1;
   /* Todo lo demas */
 \n {
   number_line++;
-}
-
-.* {
   /* Ignora texto que está dentro de comentarios multilinea */
   if(state == 0){
       break;
   } else {
     /* Imprime el texto */
+    printf("%s", yytext);
+    break;
+  }
+}
+
+.  {
+  if(state == 0){
+    break;
+  } else {
     printf("%s", yytext);
     break;
   }
