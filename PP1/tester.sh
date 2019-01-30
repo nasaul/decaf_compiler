@@ -17,4 +17,5 @@ for item in ${programas[@]}; do
   diff --text "samples/"$item"out" "samples/"$item"out1"
 done
 
-#rm samples/*.out1
+
+rm samples/*.out1
