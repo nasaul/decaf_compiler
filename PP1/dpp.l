@@ -19,7 +19,7 @@ int number_line = 1;
   line_w_com  = strdup(yytext);
   id_comment  = line_w_com.find("/*");
   line_wo_com = line_w_com.substr(0, id_comment);
-  printf("%s\n", line_wo_com.c_str());
+  printf("%s", line_wo_com.c_str());
   break;
 }
   /* Inicia comentario multilinea */
@@ -31,7 +31,7 @@ int number_line = 1;
   line_w_com  = strdup(yytext);
   id_comment  = line_w_com.find("/*");
   line_wo_com = line_w_com.substr(0, id_comment);
-  printf("%s\n", line_wo_com.c_str());
+  printf("%s", line_wo_com.c_str());
   break;
 }
   /* Termina comentario multilinea */
@@ -39,7 +39,7 @@ int number_line = 1;
   if(state == 0){
     state = 1;
   } else {
-    printf("%s\n", yytext);
+    printf("%s", yytext);
   }
   break;
 }
@@ -52,7 +52,7 @@ if(state = 1) {
   line_w_com  = strdup(yytext);
   id_comment  = line_w_com.find("//");
   line_wo_com = line_w_com.substr(0, id_comment);
-  printf("%s\n", line_wo_com.c_str());
+  printf("%s", line_wo_com.c_str());
   break;
 } else {
   break;
@@ -85,7 +85,7 @@ if(state = 1) {
     /* printf("Directiva invalida\n"); */
 	} else {
 		replacement = macros.find(name)->second;
-		printf("%s\n", replacement.substr(1).c_str());
+		printf("%s", replacement.substr(1).c_str());
   }
 }
   /* Todo lo demas */
@@ -96,7 +96,7 @@ if(state = 1) {
       break;
   } else {
     /* Imprime el texto */
-    printf("%s\n", yytext);
+    printf("%s", yytext);
     break;
   }
 }
