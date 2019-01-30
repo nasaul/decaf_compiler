@@ -89,11 +89,10 @@ static void DoBeforeEachAction();
 [a-zA-Z][a-zA-Z0-9\_]* {
   if(yyleng > MaxIdentLen){
     ReportError::LongIdentifier(&yylloc, yytext);
-  } else {
-    strncpy(yylval.identifier, yytext, MaxIdentLen);
-    return T_Identifier;
-  }
-
+  } 
+   strncpy(yylval.identifier, yytext, MaxIdentLen);
+   return T_Identifier;
+ 
 }
 
   /* Integers */

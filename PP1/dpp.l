@@ -97,6 +97,7 @@ int number_line = 1;
   number_line++;
   /* Ignora texto que está dentro de comentarios multilinea */
   if(state == 0){
+      printf("\n");
       break;
   } else {
     /* Imprime el texto */

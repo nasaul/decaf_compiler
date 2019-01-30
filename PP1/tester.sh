@@ -18,4 +18,4 @@ for item in ${programas[@]}; do
 done
 
 
-rm samples/*.out1
+#rm samples/*.out1
