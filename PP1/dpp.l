@@ -11,7 +11,6 @@ int number_line = 1;
 
 %%
 
-\n {number_line++; printf("\n");}
   /* Inicia comentario una linea */
 .*"//".*  {
   string  line_w_com, line_wo_com;
@@ -86,6 +85,7 @@ int number_line = 1;
 }
   /* Todo lo demas */
 .* {
+  number_line++;
   /* Ignora texto que está dentro de comentarios multilinea */
   if(state == 0){
       break;
@@ -95,6 +95,7 @@ int number_line = 1;
     break;
   }
 }
+
 <<EOF>> {
   /* Si termina y no han cerrado los comentarios, entonces error */
   if(state == 0){
