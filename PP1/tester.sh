@@ -1,4 +1,4 @@
-
+make
 programas_frag=($(ls samples | grep -oP '.*\.frag' | grep -oP '.*\.'))
 programas_decaf=($(ls samples | grep -oP '.*\.decaf' | grep -oP '.*\.'))
 
@@ -19,3 +19,4 @@ done
 
 
 rm samples/*.out1
+make clean
