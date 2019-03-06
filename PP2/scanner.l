@@ -22,7 +22,7 @@
 static int curLineNum, curColNum;
 List<char*> savedLines;
 
-static void DoBeforeEachAction(); 
+static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
 %}
@@ -113,7 +113,8 @@ SINGLE_COMMENT    ("//"[^\n]*)
 "&&"                { return T_And;         }
 "||"                { return T_Or;          }
 {OPERATOR}          { return yytext[0];     }
-    
+"++"                { return T_Increment;}
+"--"                { return T_Decrement;}
 "[]"                { return T_Dims;        }
 
  /* -------------------- Constants ------------------------------ */
@@ -125,7 +126,7 @@ SINGLE_COMMENT    ("//"[^\n]*)
                          return T_IntConstant; }
 {DOUBLE}            { yylval.doubleConstant = atof(yytext);
                          return T_DoubleConstant; }
-{STRING}            { yylval.stringConstant = strdup(yytext); 
+{STRING}            { yylval.stringConstant = strdup(yytext);
                          return T_StringConstant; }
 {BEG_STRING}        { ReportError::UntermString(&yylloc, yytext); }
 
@@ -191,7 +192,5 @@ static void DoBeforeEachAction()
  */
 const char *GetLineNumbered(int num) {
    if (num <= 0 || num > savedLines.NumElements()) return NULL;
-   return savedLines.Nth(num-1); 
+   return savedLines.Nth(num-1);
 }
-
-
