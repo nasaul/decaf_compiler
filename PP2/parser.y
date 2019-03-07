@@ -58,6 +58,7 @@ void yyerror(char *msg); // standard error-handling routine
     List<Stmt*> *stmt_plus;
     StmtBlock *stmtBlock;
     Stmt *stmt;
+    SwitchStmt *stmt;
     IfStmt *ifStmt;
     WhileStmt *whileStmt;
     ForStmt *forStmt;
@@ -70,7 +71,8 @@ void yyerror(char *msg); // standard error-handling routine
     Call *call;
     NamedType *namedType;
     List<NamedType*> *namedTypeList;
-
+    List<CaseStmt*> *caseList;
+    CaseStmt *caseStmt;
 }
 
 
@@ -129,7 +131,8 @@ void yyerror(char *msg); // standard error-handling routine
 %type <lValue>          LValue
 %type <call>            Call
 %type<namedTypeList>    Ident_plus_comma
-
+%type <caseList>        CaseList
+%type <caseStmt>        Case
 
 %nonassoc IF_NO_ELSE
 %nonassoc T_Else
@@ -446,6 +449,10 @@ Stmt              :   Optional_Expr ';'
                   |   StmtBlock
                       {
                           $$ = $1;
+                      }
+                  | SwitchStmt
+                      {
+                        $$ = $1;
                       }
                   ;
 
