@@ -450,9 +450,9 @@ Stmt              :   Optional_Expr ';'
                       {
                           $$ = $1;
                       }
-                  | SwitchStmt
+                  |   SwitchStmt
                       {
-                        $$ = $1;
+                          $$ = $1;
                       }
                   ;
 
