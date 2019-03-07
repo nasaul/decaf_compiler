@@ -85,7 +85,7 @@ void yyerror(char *msg); // standard error-handling routine
 %token   T_And T_Or T_Null T_Extends T_This T_Interface T_Implements
 %token   T_While T_For T_If T_Else T_Return T_Break
 %token   T_New T_NewArray T_Print T_ReadInteger T_ReadLine
-%token   T_Increment T_Decrement
+%token   T_Increment T_Decrement T_Switch T_Case
 
 %token   <identifier> T_Identifier
 %token   <stringConstant> T_StringConstant
@@ -700,6 +700,16 @@ Actuals           :   Expr_plus_comma
                       }
                   ;
 
+SwitchStmt        :   T_Switch '(' Expr ')' '{' CaseList Default '}'  { $$ = new SwitchStmt($3,$6,$7); }
+                  |   T_Switch '(' Expr ')' '{' CaseList '}'          { $$ = new SwitchStmt($3,$6,NULL); }
+                  ;
+
+CaseList    :   CaseList Case   { ($$=$1)->Append($2); }
+                  |   Case            { ($$ = new List<CaseStmt*>)->Append($1); }
+                  ;
+
+Case        :   T_Case T_IntConstant ':' StmList    { $$ = new CaseStmt(new IntConstant(@2, $2), $4); }
+                  ;
 
 
 Constant          :   T_IntConstant
