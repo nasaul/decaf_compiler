@@ -715,7 +715,7 @@ CaseList    :   CaseList Case   { ($$=$1)->Append($2); }
                   |   Case            { ($$ = new List<CaseStmt*>)->Append($1); }
                   ;
 
-Case        :   T_Case T_IntConstant ':' StmList    { $$ = new CaseStmt(new IntConstant(@2, $2), $4); }
+Case        :   T_Case T_IntConstant ':' StmtList    { $$ = new CaseStmt(new IntConstant(@2, $2), $4); }
                   ;
 
 
