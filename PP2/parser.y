@@ -58,7 +58,6 @@ void yyerror(char *msg); // standard error-handling routine
     List<Stmt*> *stmt_plus;
     StmtBlock *stmtBlock;
     Stmt *stmt;
-    SwitchStmt *stmt;
     IfStmt *ifStmt;
     WhileStmt *whileStmt;
     ForStmt *forStmt;
@@ -71,8 +70,7 @@ void yyerror(char *msg); // standard error-handling routine
     Call *call;
     NamedType *namedType;
     List<NamedType*> *namedTypeList;
-    List<CaseStmt*> *caseList;
-    CaseStmt *caseStmt;
+
 }
 
 
@@ -87,7 +85,7 @@ void yyerror(char *msg); // standard error-handling routine
 %token   T_And T_Or T_Null T_Extends T_This T_Interface T_Implements
 %token   T_While T_For T_If T_Else T_Return T_Break
 %token   T_New T_NewArray T_Print T_ReadInteger T_ReadLine
-%token   T_Increment T_Decrement T_Switch T_Case
+%token   T_Increment T_Decrement
 
 %token   <identifier> T_Identifier
 %token   <stringConstant> T_StringConstant
@@ -131,8 +129,7 @@ void yyerror(char *msg); // standard error-handling routine
 %type <lValue>          LValue
 %type <call>            Call
 %type<namedTypeList>    Ident_plus_comma
-%type <caseList>        CaseList
-%type <caseStmt>        Case
+
 
 %nonassoc IF_NO_ELSE
 %nonassoc T_Else
@@ -167,13 +164,9 @@ Program           :   DeclList
                       }
                   ;
 
-
-
 DeclList          :   DeclList Decl {($$=$1)->Append($2);}
                   |   Decl          {($$ = new List<Decl*>)->Append($1);}
                   ;
-
-
 
 Decl              :   VariableDecl  {$$ = $1;}
                   |   FunctionDecl  {$$ = $1;}
@@ -181,12 +174,8 @@ Decl              :   VariableDecl  {$$ = $1;}
                   |   InterfaceDecl {$$ = $1;}
                   ;
 
-
-
 VariableDecl      :   Variable ';'  {$$ = $1;}
                   ;
-
-
 
 Variable          :   Type T_Identifier
                       {
@@ -195,24 +184,10 @@ Variable          :   Type T_Identifier
                       }
                   ;
 
-
-
-Type              :   T_Int
-                      {
-                        $$ = Type::intType;
-                      }
-                  |   T_Double
-                      {
-                        $$ = Type::doubleType;
-                      }
-                  |   T_Bool
-                      {
-                        $$ = Type::boolType;
-                      }
-                  |   T_String
-                      {
-                        $$ = Type::stringType;
-                      }
+Type              :   T_Int       {$$ = Type::intType;}
+                  |   T_Double    {$$ = Type::doubleType;}
+                  |   T_Bool      {$$ = Type::boolType;}
+                  |   T_String    {$$ = Type::stringType;}
                   |   T_Identifier
                       {
                         Identifier *ident = new Identifier(@1, $1);
@@ -223,8 +198,6 @@ Type              :   T_Int
                         $$ = new ArrayType(@1, $1);
                       }
                   ;
-
-
 
 FunctionDecl      :   Type T_Identifier '(' Formals ')' StmtBlock
                       {
@@ -240,19 +213,9 @@ FunctionDecl      :   Type T_Identifier '(' Formals ')' StmtBlock
                       }
                   ;
 
-
-
-Formals           :   VarList
-                      {
-                        $$ = $1;
-                      }
-                  |
-                      {
-                        $$ = new List<VarDecl*>;
-                      }
+Formals           :   VarList {$$ = $1;}
+                  |   {$$ = new List<VarDecl*>;}
                   ;
-
-
 
 VarList           :   Variable
                       {
@@ -264,8 +227,6 @@ VarList           :   Variable
                         $$ -> Append($3);
                       }
                   ;
-
-
 
 ClassDecl         :   T_Class T_Identifier T_Extends T_Identifier T_Implements Ident_plus_comma '{' Field_star '}'
                       {
@@ -293,20 +254,13 @@ ClassDecl         :   T_Class T_Identifier T_Extends T_Identifier T_Implements I
                       }
                   ;
 
-
-
-Field_star        :
-                      {
-                        $$ = new List<Decl*>;
-                      }
+Field_star        :   {$$ = new List<Decl*>;}
                   |   Field_star Field
                       {
                         $$ = $1;
                         $$ -> Append($2);
                       }
                   ;
-
-
 
 Ident_plus_comma  :   T_Identifier
                       {
@@ -323,19 +277,9 @@ Ident_plus_comma  :   T_Identifier
                       }
                   ;
 
-
-
-Field             :   VariableDecl
-                      {
-                        $$ = $1;
-                      }
-                  |   FunctionDecl
-                      {
-                        $$ = $1;
-                      }
+Field             :   VariableDecl  {$$ = $1;}
+                  |   FunctionDecl  {$$ = $1;}
                   ;
-
-
 
 InterfaceDecl     :   T_Interface T_Identifier '{' Prototype_star '}'
                       {
@@ -344,19 +288,12 @@ InterfaceDecl     :   T_Interface T_Identifier '{' Prototype_star '}'
                       }
                   ;
 
-
-
-Prototype_star    :
-                      {
-                        $$ = new List<Decl*>;
-                      }
+Prototype_star    :   {$$ = new List<Decl*>;}
                   |   Prototype_star Prototype
                       {
                         $$ -> Append($2);
                       }
                   ;
-
-
 
 Prototype         :   Type T_Identifier '(' Formals ')' ';'
                       {
@@ -370,8 +307,6 @@ Prototype         :   Type T_Identifier '(' Formals ')' ';'
                       }
                   ;
 
-
-
 Var_Decl_plus     :   VariableDecl
                       {
                         $$ = new List<VarDecl*>;
@@ -383,8 +318,6 @@ Var_Decl_plus     :   VariableDecl
                       }
                   ;
 
-
-
 Stmt_plus         :   Stmt
                       {
                         $$ = new List<Stmt*>;
@@ -395,8 +328,6 @@ Stmt_plus         :   Stmt
                         $$ -> Append($2);
                       }
                   ;
-
-
 
 StmtBlock         :   '{' Var_Decl_plus Stmt_plus '}'
                       {
@@ -416,47 +347,15 @@ StmtBlock         :   '{' Var_Decl_plus Stmt_plus '}'
                       }
                   ;
 
-
-
-Stmt              :   Optional_Expr ';'
-                      {
-                          $$ = $1;
-                      }
-                  |   IfStmt
-                      {
-                          $$ = $1;
-                      }
-                  |   WhileStmt
-                      {
-                          $$ = $1;
-                      }
-                  |   ForStmt
-                      {
-                          $$ = $1;
-                      }
-                  |   BreakStmt
-                      {
-                          $$ = $1;
-                      }
-                  |   ReturnStmt
-                      {
-                          $$ = $1;
-                      }
-                  |   PrintStmt
-                      {
-                          $$ = $1;
-                      }
-                  |   StmtBlock
-                      {
-                          $$ = $1;
-                      }
-                  |   SwitchStmt
-                      {
-                          $$ = $1;
-                      }
+Stmt              :   Optional_Expr ';'   {$$ = $1;}
+                  |   IfStmt              {$$ = $1;}
+                  |   WhileStmt           {$$ = $1;}
+                  |   ForStmt             {$$ = $1;}
+                  |   BreakStmt           {$$ = $1;}
+                  |   ReturnStmt          {$$ = $1;}
+                  |   PrintStmt           {$$ = $1;}
+                  |   StmtBlock           {$$ = $1;}
                   ;
-
-
 
 IfStmt            :   T_If '(' Expr ')' Stmt %prec IF_NO_ELSE
                       {
@@ -468,15 +367,11 @@ IfStmt            :   T_If '(' Expr ')' Stmt %prec IF_NO_ELSE
                       }
                   ;
 
-
-
 WhileStmt         :   T_While '(' Expr ')' Stmt
                       {
                         $$ = new WhileStmt($3, $5);
                       }
                   ;
-
-
 
 ForStmt           :   T_For '(' Optional_Expr ';' Expr ';' Optional_Expr ')' Stmt
                       {
@@ -484,19 +379,9 @@ ForStmt           :   T_For '(' Optional_Expr ';' Expr ';' Optional_Expr ')' Stm
                       }
                   ;
 
-
-
-Optional_Expr     :
-                      {
-                        $$ = new EmptyExpr();
-                      }
-                  |   Expr
-                      {
-                        $$ = $1;
-                      }
+Optional_Expr     :         {$$ = new EmptyExpr();}
+                  |   Expr  {$$ = $1;}
                   ;
-
-
 
 ReturnStmt        :   T_Return Optional_Expr ';'
                       {
@@ -504,23 +389,17 @@ ReturnStmt        :   T_Return Optional_Expr ';'
                       }
                   ;
 
-
-
 BreakStmt         :   T_Break ';'
                       {
                         $$ = new BreakStmt(@1);
                       }
                   ;
 
-
-
 PrintStmt         :   T_Print '(' Expr_plus_comma ')' ';'
                       {
                         $$ = new PrintStmt($3);
                       }
                   ;
-
-
 
 Expr_plus_comma   :   Expr
                       {
@@ -533,29 +412,15 @@ Expr_plus_comma   :   Expr
                       }
                   ;
 
-
-
 Expr              :   LValue '=' Expr
                       {
                         Operator *op = new Operator(@2, "=");
                         $$ = new AssignExpr($1, op, $3);
                       }
-                  |   Constant
-                      {
-                        $$ = $1;
-                      }
-                  |   LValue
-                      {
-                        $$ = $1;
-                      }
-                  |   T_This
-                      {
-                        $$ = new This(@1);
-                      }
-                  |   Call
-                      {
-                        $$ = $1;
-                      }
+                  |   Constant  {$$ = $1;}
+                  |   LValue    {$$ = $1;}
+                  |   T_This    {$$ = new This(@1);}
+                  |   Call      {$$ = $1;}
                   |   '(' Expr ')'
                       {
                         $$ = $2;
@@ -663,8 +528,6 @@ Expr              :   LValue '=' Expr
                       }
                   ;
 
-
-
 LValue            :   T_Identifier
                       {
                         Identifier *ident = new Identifier(@1, $1);
@@ -681,8 +544,6 @@ LValue            :   T_Identifier
                       }
                   ;
 
-
-
 Call              :   T_Identifier '(' Actuals ')'
                       {
                         Identifier *ident = new Identifier(@1, $1);
@@ -695,29 +556,9 @@ Call              :   T_Identifier '(' Actuals ')'
                       }
                   ;
 
-
-
-Actuals           :   Expr_plus_comma
-                      {
-                        $$ = $1;
-                      }
-                  |
-                      {
-                        $$ = new List<Expr*>;
-                      }
+Actuals           :   Expr_plus_comma   {$$ = $1;}
+                  |                     {$$ = new List<Expr*>;}
                   ;
-
-SwitchStmt        :   T_Switch '(' Expr ')' '{' CaseList Default '}'  { $$ = new SwitchStmt($3,$6,$7); }
-                  |   T_Switch '(' Expr ')' '{' CaseList '}'          { $$ = new SwitchStmt($3,$6,NULL); }
-                  ;
-
-CaseList    :   CaseList Case   { ($$=$1)->Append($2); }
-                  |   Case            { ($$ = new List<CaseStmt*>)->Append($1); }
-                  ;
-
-Case        :   T_Case T_IntConstant ':' StmtList    { $$ = new CaseStmt(new IntConstant(@2, $2), $4); }
-                  ;
-
 
 Constant          :   T_IntConstant
                       {
@@ -740,9 +581,6 @@ Constant          :   T_IntConstant
                         $$ = new NullConstant(@1);
                       }
                   ;
-
-
-
 
 %%
 
