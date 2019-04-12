@@ -5,8 +5,8 @@
  * specialized for declarations of variables, functions, classes,
  * and interfaces.
  *
- * pp3: You will need to extend the Decl classes to implement 
- * semantic processing including detection of declaration conflicts 
+ * pp3: You will need to extend the Decl classes to implement
+ * semantic processing including detection of declaration conflicts
  * and managing scoping issues.
  */
 
@@ -23,22 +23,16 @@ class NamedType;
 class Identifier;
 class Stmt;
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-/// Decl
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-class Decl : public Node 
+class Decl : public Node
 {
   protected:
     Identifier *id;
     Scope *scope;
-  
+
   public:
     Decl(Identifier *name);
     friend std::ostream& operator<<(std::ostream& out, Decl *d) { return out << d->id; }
-    
+
     virtual bool AreEquiv(Decl *other);
 
     const char* Name() { return id->Name(); }
@@ -48,34 +42,23 @@ class Decl : public Node
     virtual void Check() = 0;
 };
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-/// VarDecl
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-class VarDecl : public Decl 
+class VarDecl : public Decl
 {
   protected:
     Type *type;
-    
+
   public:
     VarDecl(Identifier *name, Type *type);
     bool AreEquiv(Decl *other);
     Type* TypeFinder() { return type; }
     void Check();
-    
+
   private:
     void FindType();
 };
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-/// ClassDecl
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
 
-class ClassDecl : public Decl 
+class ClassDecl : public Decl
 {
   protected:
     List<Decl*> *members;
@@ -83,7 +66,7 @@ class ClassDecl : public Decl
     List<NamedType*> *implements;
 
   public:
-    ClassDecl(Identifier *name, NamedType *extends, 
+    ClassDecl(Identifier *name, NamedType *extends,
               List<NamedType*> *implements, List<Decl*> *members);
     void ScopeMaker(Scope *parent);
     void Check();
@@ -100,17 +83,12 @@ class ClassDecl : public Decl
     void ExtendsFinder();
 };
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-/// InterfaceDecl
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
 
-class InterfaceDecl : public Decl 
+class InterfaceDecl : public Decl
 {
   protected:
     List<Decl*> *members;
-    
+
   public:
     InterfaceDecl(Identifier *name, List<Decl*> *members);
     void ScopeMaker(Scope *parent);
@@ -119,19 +97,13 @@ class InterfaceDecl : public Decl
     List<Decl*>* GetMembers() { return members; }
 };
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-/// FnDecl
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-class FnDecl : public Decl 
+class FnDecl : public Decl
 {
   protected:
     List<VarDecl*> *formals;
     Type *returnType;
     Stmt *body;
-    
+
   public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
