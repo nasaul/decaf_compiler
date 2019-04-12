@@ -63,7 +63,6 @@ void VarDecl::FindType() {
 
 
 ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<Decl*> *m) : Decl(n) {
-    // extends can be NULL, impl & mem may be empty lists but cannot be NULL
     Assert(n != NULL && imp != NULL && m != NULL);
     extends = ex;
     if (extends) extends->SetParent(this);
@@ -212,7 +211,7 @@ void InterfaceDecl::Check() {
     for (int i = 0, n = members->NumElements(); i < n; ++i)
         members->Nth(i)->Check();
 }
-	
+
 
 FnDecl::FnDecl(Identifier *n, Type *r, List<VarDecl*> *d) : Decl(n) {
     Assert(n != NULL && r!= NULL && d != NULL);

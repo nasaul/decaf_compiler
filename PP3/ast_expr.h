@@ -100,7 +100,7 @@ class NullConstant: public Expr
 class Operator : public Node
 {
   protected:
-    char tokenString[4];
+    char tokenString[3];
 
   public:
     Operator(yyltype loc, const char *tok);
