@@ -4,9 +4,6 @@
  * store type information. The base Type class is used
  * for built-in types, the NamedType for classes and interfaces,
  * and the ArrayType for arrays of other types.  
- *
- * pp3: You will need to extend the Type classes to implement
- * the type system and rules for type equivalency and compatibility.
  */
  
 #ifndef _H_ast_type
@@ -15,7 +12,7 @@
 #include "ast.h"
 #include "list.h"
 #include <iostream>
-#include "errors.h"
+
 
 class Type : public Node 
 {
@@ -26,37 +23,31 @@ class Type : public Node
     static Type *intType, *doubleType, *boolType, *voidType,
                 *nullType, *stringType, *errorType;
 
-    bool TD;
     Type(yyltype loc) : Node(loc) {}
-    Type() : Node() {}
     Type(const char *str);
     
     virtual void PrintToStream(std::ostream& out) { out << typeName; }
     friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
-    virtual bool IsEqualTo(Type *other) { return this == other; }
-    virtual bool AreEquiv(Type *other);
-    virtual void RepUndeclaredId(reasonT reason) { return; }
-
-    virtual const char* Name() { return typeName; }
-    virtual bool IsPrimitive() { return true; }
+    virtual bool IsEquivalentTo(Type *other) { return this == other; }
 };
 
 class NamedType : public Type 
 {
   protected:
     Identifier *id;
+    Decl *cachedDecl; // either class or inteface
+    bool isError;
     
   public:
     NamedType(Identifier *i);
     
     void PrintToStream(std::ostream& out) { out << id; }
-    void RepUndeclaredId(reasonT reason);
-    bool IsEqualTo(Type *other);
-    bool AreEquiv(Type *other);
-
-    const char* Name() { return id->Name(); }
-    bool IsPrimitive() { return false; }
-    Identifier* GetId() { return id; }
+    void Check();
+    Decl *GetDeclForType();
+    bool IsInterface();
+    bool IsClass();
+    Identifier *GetId() { return id; }
+    bool IsEquivalentTo(Type *other);
 };
 
 class ArrayType : public Type 
@@ -66,17 +57,10 @@ class ArrayType : public Type
 
   public:
     ArrayType(yyltype loc, Type *elemType);
-    ArrayType(Type *elemType);
     
     void PrintToStream(std::ostream& out) { out << elemType << "[]"; }
-    void RepUndeclaredId(reasonT reason);
-    bool IsEqualTo(Type *other);
-    bool AreEquiv(Type *other);
-
-    const char* Name() { return elemType->Name(); }
-    bool IsPrimitive() { return false; }
-
-    Type* GetElemType() { return elemType; }
+    void Check();
+    bool IsEquivalentTo(Type *other);
 };
 
  

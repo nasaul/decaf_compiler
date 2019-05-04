@@ -18,11 +18,6 @@
  * instead we wait until assigning the children into the parent node and then 
  * set up links in both directions. The parent link is typically not used 
  * during parsing, but is more important in later phases.
- *
- * Semantic analysis: For pp3 you are adding "Check" behavior to the ast
- * node classes. Your semantic analyzer should do an inorder walk on the
- * parse tree, and when visiting each node, verify the particular
- * semantic rules that apply to that construct.
 
  */
 
@@ -32,21 +27,30 @@
 #include <stdlib.h>   // for NULL
 #include "location.h"
 #include <iostream>
+class Scope;
+class Decl;
+class Identifier;
+class Type;
 
 class Node 
 {
   protected:
     yyltype *location;
     Node *parent;
+    Scope *nodeScope;
 
   public:
     Node(yyltype loc);
     Node();
-    virtual ~Node() {}
     
     yyltype *GetLocation()   { return location; }
     void SetParent(Node *p)  { parent = p; }
     Node *GetParent()        { return parent; }
+    virtual void Check() {} // not abstract, since some nodes have nothing to do
+    
+    typedef enum { kShallow, kDeep } lookup;
+    virtual Decl *FindDecl(Identifier *id, lookup l = kDeep);
+    virtual Scope *PrepareScope() { return NULL; }
 };
    
 
@@ -54,12 +58,12 @@ class Identifier : public Node
 {
   protected:
     char *name;
+    Decl *cached;
     
   public:
     Identifier(yyltype loc, const char *name);
     friend std::ostream& operator<<(std::ostream& out, Identifier *id) { return out << id->name; }
-    bool operator==(const Identifier &rhs);
-    const char* Name() { return name; }
+    const char *GetName() { return name; }
 };
 
 

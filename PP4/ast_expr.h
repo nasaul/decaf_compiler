@@ -16,21 +16,13 @@
 
 class NamedType; // for new
 class Type; // for NewArray
-class FnDecl;
-class ClassDecl;
+
 
 class Expr : public Stmt 
 {
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
-    
-    virtual Type* TypeFinder() = 0; // With "virtual" you get "late binding". 
-
-  protected:
-    ClassDecl* Get_Class_Declaration(Scope *s);
-    Decl* GetFieldDecl(Identifier *field, Type *base);
-    Decl* GetFieldDecl(Identifier *field, Scope *scope);
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -39,8 +31,6 @@ class Expr : public Stmt
 class EmptyExpr : public Expr
 {
   public:
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class IntConstant : public Expr 
@@ -50,9 +40,6 @@ class IntConstant : public Expr
   
   public:
     IntConstant(yyltype loc, int val);
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class DoubleConstant : public Expr 
@@ -62,9 +49,6 @@ class DoubleConstant : public Expr
     
   public:
     DoubleConstant(yyltype loc, double val);
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class BoolConstant : public Expr 
@@ -74,9 +58,6 @@ class BoolConstant : public Expr
     
   public:
     BoolConstant(yyltype loc, bool val);
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class StringConstant : public Expr 
@@ -86,18 +67,12 @@ class StringConstant : public Expr
     
   public:
     StringConstant(yyltype loc, const char *val);
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class NullConstant: public Expr 
 {
   public: 
     NullConstant(yyltype loc) : Expr(loc) {}
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class Operator : public Node 
@@ -108,6 +83,7 @@ class Operator : public Node
   public:
     Operator(yyltype loc, const char *tok);
     friend std::ostream& operator<<(std::ostream& out, Operator *o) { return out << o->tokenString; }
+    const char *str() { return tokenString; }
  };
  
 class CompoundExpr : public Expr
@@ -119,38 +95,19 @@ class CompoundExpr : public Expr
   public:
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
-    CompoundExpr(Expr *lhs, Operator *op);             // for postfix
-    
-    virtual void ScopeMake(Scope *parent);
-    virtual void Check();
 };
-
-// class PostfixExpr : public CompoundExpr
-// {
-//   public:
-//     PostfixExpr(Expr *lhs, Operator *op) : CompoundExpr(lhs,op) {}
-    
-//     Type* TypeFinder();
-//     void Check();
-// };
 
 class ArithmeticExpr : public CompoundExpr 
 {
   public:
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class RelationalExpr : public CompoundExpr 
 {
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -158,9 +115,6 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -169,9 +123,6 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class AssignExpr : public CompoundExpr 
@@ -179,9 +130,6 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class LValue : public Expr 
@@ -194,9 +142,6 @@ class This : public Expr
 {
   public:
     This(yyltype loc) : Expr(loc) {}
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class ArrayAccess : public LValue 
@@ -206,10 +151,6 @@ class ArrayAccess : public LValue
     
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
-    
-    Type* TypeFinder();
-    void ScopeMake(Scope *parent);
-    void Check();
 };
 
 /* Note that field access is used both for qualified names
@@ -225,10 +166,6 @@ class FieldAccess : public LValue
     
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
-    
-    Type* TypeFinder();
-    void ScopeMake(Scope *parent);
-    void Check();
 };
 
 /* Like field access, call is used both for qualified base.field()
@@ -244,13 +181,6 @@ class Call : public Expr
     
   public:
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
-    
-    Type* TypeFinder();
-    void ScopeMake(Scope *parent);
-    void Check();
-
-  private:
-    void ActualsFinder(Decl *d);
 };
 
 class NewExpr : public Expr
@@ -260,9 +190,6 @@ class NewExpr : public Expr
     
   public:
     NewExpr(yyltype loc, NamedType *clsType);
-    
-    Type* TypeFinder();
-    void Check();
 };
 
 class NewArrayExpr : public Expr
@@ -273,28 +200,18 @@ class NewArrayExpr : public Expr
     
   public:
     NewArrayExpr(yyltype loc, Expr *sizeExpr, Type *elemType);
-    
-    Type* TypeFinder();
-    void ScopeMake(Scope *parent);
-    void Check();
 };
 
 class ReadIntegerExpr : public Expr
 {
   public:
     ReadIntegerExpr(yyltype loc) : Expr(loc) {}
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
 class ReadLineExpr : public Expr
 {
   public:
     ReadLineExpr(yyltype loc) : Expr (loc) {}
-    
-    Type* TypeFinder();
-    void Check() {}
 };
 
     
