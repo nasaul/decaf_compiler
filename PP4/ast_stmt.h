@@ -4,6 +4,9 @@
  * statements in the parse tree.  For each statment in the
  * language (for, if, return, etc.) there is a corresponding
  * node class for that construct. 
+ *
+ * pp3: You will need to extend the Stmt classes to implement
+ * semantic analysis for rules pertaining to statements.
  */
 
 
@@ -12,26 +15,77 @@
 
 #include "list.h"
 #include "ast.h"
+#include "hashtable.h"
+#include "ast_type.h"
 
 class Decl;
 class VarDecl;
 class Expr;
-  
+class Type;
+class ClassDecl;
+class LoopStmt;
+class FnDecl;
+class SwitchStmt;
+
+class Scope
+{
+  private:
+    Scope *parent;
+
+  public:
+    Hashtable<Decl*> *table;
+    ClassDecl *classDecl;
+    LoopStmt *loopStmt;
+    SwitchStmt *switchStmt;
+    FnDecl *fnDecl;
+
+  public:
+    Scope() : table(new Hashtable<Decl*>), classDecl(NULL), loopStmt(NULL),
+              fnDecl(NULL) {}
+
+    void SetParent(Scope *p) { parent = p; }
+    Scope* GetParent() { return parent; }
+
+    void SetClassDecl(ClassDecl *d) { classDecl = d; }
+    ClassDecl* Get_Class_Declaration() { return classDecl; }
+
+    void SetLoopStmt(LoopStmt *s) { loopStmt = s; }
+    LoopStmt* GetLoopStmt() { return loopStmt; }
+    
+    void SetSwitchStmt(SwitchStmt *s) { switchStmt = s; }
+    SwitchStmt* GetSwitchStmt() { return switchStmt; }
+
+    void SetFnDecl(FnDecl *d) { fnDecl = d; }
+    FnDecl* GetFnDecl() { return fnDecl; }
+
+    int Add_Declaration(Decl *decl);
+    friend std::ostream& operator<<(std::ostream& out, Scope *s);
+};
+   
 class Program : public Node
 {
   protected:
      List<Decl*> *decls;
      
   public:
+     static Scope *G_Scope;
      Program(List<Decl*> *declList);
      void Check();
+  
+  private:
+     void ScopeMake();
 };
 
 class Stmt : public Node
 {
+  protected:
+     Scope *scope;
+     
   public:
-     Stmt() : Node() {}
-     Stmt(yyltype loc) : Node(loc) {}
+     Stmt() : Node(), scope(new Scope) {}
+     Stmt(yyltype loc) : Node(loc), scope(new Scope) {}
+     virtual void ScopeMake(Scope *parent);
+     virtual void Check() = 0;
 };
 
 class StmtBlock : public Stmt 
@@ -42,6 +96,7 @@ class StmtBlock : public Stmt
     
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
+    void ScopeMake(Scope *parent);
     void Check();
 };
 
@@ -54,7 +109,8 @@ class ConditionalStmt : public Stmt
   
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
-    void Check();
+    virtual void ScopeMake(Scope *parent);
+    virtual void Check();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -62,6 +118,7 @@ class LoopStmt : public ConditionalStmt
   public:
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
+    virtual void ScopeMake(Scope *parent);
 };
 
 class ForStmt : public LoopStmt 
@@ -86,6 +143,7 @@ class IfStmt : public ConditionalStmt
   
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
+    void ScopeMake(Scope *parent);
     void Check();
 };
 
@@ -93,6 +151,7 @@ class BreakStmt : public Stmt
 {
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
+    void Check();
 };
 
 class ReturnStmt : public Stmt  
@@ -102,6 +161,8 @@ class ReturnStmt : public Stmt
   
   public:
     ReturnStmt(yyltype loc, Expr *expr);
+    void ScopeMake(Scope *parent);
+    void Check();
 };
 
 class PrintStmt : public Stmt
@@ -111,7 +172,33 @@ class PrintStmt : public Stmt
     
   public:
     PrintStmt(List<Expr*> *arguments);
+    void ScopeMake(Scope *parent);
+    void Check();
 };
 
+class SwitchStmt : public Stmt
+{
+  public:
+    class CaseStmt : public Stmt
+    {
+      protected:
+        Expr *intConst;
+        List<Stmt*> *caseBody;
+
+      public:
+        CaseStmt(Expr *intConst, List<Stmt*> *caseBody);
+        void ScopeMake(Scope *parent);
+        void Check();
+    };
+
+  protected:
+    Expr *expr;
+    List<CaseStmt*> *caseStmts;
+
+  public:
+    SwitchStmt(Expr *expr, List<CaseStmt*> *caseStmts);
+    void ScopeMake(Scope *parent);
+    void Check();
+};
 
 #endif
