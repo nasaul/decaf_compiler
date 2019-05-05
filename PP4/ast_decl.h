@@ -47,8 +47,6 @@ class Decl : public Node
     virtual void ScopeMake(Scope *parent);
     virtual void Check() = 0;
     Identifier *GetId() { return id; }
-    const char *GetName() { return id->GetName(); }
-
     virtual bool ConflictsWithPrevious(Decl *prev);
 
     virtual bool IsVarDecl() { return false; } // jdz: could use typeid/dynamic_cast for these
