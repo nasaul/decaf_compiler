@@ -5,8 +5,8 @@
  * specialized for declarations of variables, functions, classes,
  * and interfaces.
  *
- * pp3: You will need to extend the Decl classes to implement 
- * semantic processing including detection of declaration conflicts 
+ * pp3: You will need to extend the Decl classes to implement
+ * semantic processing including detection of declaration conflicts
  * and managing scoping issues.
  */
 
@@ -29,16 +29,16 @@ class Stmt;
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-class Decl : public Node 
+class Decl : public Node
 {
   protected:
     Identifier *id;
     Scope *scope;
-  
+
   public:
     Decl(Identifier *name);
     friend std::ostream& operator<<(std::ostream& out, Decl *d) { return out << d->id; }
-    
+
     virtual bool AreEquiv(Decl *other);
 
     const char* Name() { return id->Name(); }
@@ -46,6 +46,16 @@ class Decl : public Node
 
     virtual void ScopeMake(Scope *parent);
     virtual void Check() = 0;
+    Identifier *GetId() { return id; }
+    const char *GetName() { return id->GetName(); }
+
+    virtual bool ConflictsWithPrevious(Decl *prev);
+
+    virtual bool IsVarDecl() { return false; } // jdz: could use typeid/dynamic_cast for these
+    virtual bool IsClassDecl() { return false; }
+    virtual bool IsInterfaceDecl() { return false; }
+    virtual bool IsFnDecl() { return false; }
+    virtual bool IsMethodDecl() { return false; }
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -54,22 +64,22 @@ class Decl : public Node
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-class VarDecl : public Decl 
+class VarDecl : public Decl
 {
   protected:
     Type *type;
     //bool type_declared;
-    
+
   public:
     VarDecl(Identifier *name, Type *type);
-    
+
     bool AreEquiv(Decl *other);
 
     Type* TypeFinder() { return type; }
     void Check();
     //bool is_declared_type() { return type_declared; }
-    
-    
+
+
   private:
     void FindType();
 };
@@ -80,7 +90,7 @@ class VarDecl : public Decl
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-class ClassDecl : public Decl 
+class ClassDecl : public Decl
 {
   protected:
     List<Decl*> *members;
@@ -88,7 +98,7 @@ class ClassDecl : public Decl
     List<NamedType*> *implements;
 
   public:
-    ClassDecl(Identifier *name, NamedType *extends, 
+    ClassDecl(Identifier *name, NamedType *extends,
               List<NamedType*> *implements, List<Decl*> *members);
     void ScopeMake(Scope *parent);
     void Check();
@@ -111,11 +121,11 @@ class ClassDecl : public Decl
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-class InterfaceDecl : public Decl 
+class InterfaceDecl : public Decl
 {
   protected:
     List<Decl*> *members;
-    
+
   public:
     InterfaceDecl(Identifier *name, List<Decl*> *members);
     void ScopeMake(Scope *parent);
@@ -130,13 +140,13 @@ class InterfaceDecl : public Decl
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-class FnDecl : public Decl 
+class FnDecl : public Decl
 {
   protected:
     List<VarDecl*> *formals;
     Type *returnType;
     Stmt *body;
-    
+
   public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
