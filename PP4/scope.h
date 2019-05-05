@@ -11,19 +11,42 @@
 
 class Decl;
 class Identifier;
-class ClassDecl; 
+class ClassDecl;
 
-class Scope { 
-  protected:
-    Hashtable<Decl*> *table;
+
+class Scope
+{
+  private:
+    Scope *parent;
 
   public:
-    Scope();
+    Hashtable<Decl*> *table;
+    ClassDecl *classDecl;
+    LoopStmt *loopStmt;
+    SwitchStmt *switchStmt;
+    FnDecl *fnDecl;
 
-    Decl *Lookup(Identifier *id);
-    bool Declare(Decl *dec);
-    void CopyFromScope(Scope *other, ClassDecl *cd);
+  public:
+    Scope() : table(new Hashtable<Decl*>), classDecl(NULL), loopStmt(NULL),
+              fnDecl(NULL) {}
+
+    void SetParent(Scope *p) { parent = p; }
+    Scope* GetParent() { return parent; }
+
+    void SetClassDecl(ClassDecl *d) { classDecl = d; }
+    ClassDecl* Get_Class_Declaration() { return classDecl; }
+
+    void SetLoopStmt(LoopStmt *s) { loopStmt = s; }
+    LoopStmt* GetLoopStmt() { return loopStmt; }
+
+    void SetSwitchStmt(SwitchStmt *s) { switchStmt = s; }
+    SwitchStmt* GetSwitchStmt() { return switchStmt; }
+
+    void SetFnDecl(FnDecl *d) { fnDecl = d; }
+    FnDecl* GetFnDecl() { return fnDecl; }
+
+    int Add_Declaration(Decl *decl);
+    friend std::ostream& operator<<(std::ostream& out, Scope *s);
 };
-
 
 #endif
