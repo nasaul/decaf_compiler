@@ -76,7 +76,7 @@ class VarDecl : public Decl
     Type* TypeFinder() { return type; }
     void Check();
     //bool is_declared_type() { return type_declared; }
-
+    Type *GetDeclaredType() { return type; }
 
   private:
     void FindType();
