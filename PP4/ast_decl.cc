@@ -24,6 +24,10 @@ bool Decl::AreEquiv(Decl *other) {
 void Decl::ScopeMake(Scope *parent) {
     scope->SetParent(parent);
 }
+bool Decl::ConflictsWithPrevious(Decl *prev) {
+    ReportError::DeclConflict(this, prev);
+    return true;
+}
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
