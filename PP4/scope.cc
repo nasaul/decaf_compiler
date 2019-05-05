@@ -35,11 +35,11 @@ Decl *Scope::Lookup(Identifier *id)
  */
 bool Scope::Declare(Decl *decl)
 {
-  Decl *prev = table->Lookup(decl->name());
+  Decl *prev = table->Lookup(decl->Name());
   PrintDebug("scope", "Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->GetName(), prev);
   if (prev && decl->ConflictsWithPrevious(prev)) // throw away second, keep first
       return false;
-  table->Enter(decl->name(), decl);
+  table->Enter(decl->Name(), decl);
   return true;
 }
 
