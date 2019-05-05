@@ -153,6 +153,7 @@ class FnDecl : public Decl
     List<VarDecl*>* GetFormals() { return formals; }
     void ScopeMake(Scope *parent);
     void Check();
+    bool ConflictsWithPrevious(Decl *prev);
 };
 
 #endif
