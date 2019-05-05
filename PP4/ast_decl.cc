@@ -10,11 +10,11 @@
 ////////////////////////////////////////////////////////////////////////
 /// Decl
 ////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////        
-         
+////////////////////////////////////////////////////////////////////////
+
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()), scope(new Scope) {
     Assert(n != NULL);
-    (id=n)->SetParent(this); 
+    (id=n)->SetParent(this);
 }
 
 bool Decl::AreEquiv(Decl *other) {
@@ -79,7 +79,7 @@ void VarDecl::FindType() {
 
 ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<Decl*> *m) : Decl(n) {
     // extends can be NULL, impl & mem may be empty lists but cannot be NULL
-    Assert(n != NULL && imp != NULL && m != NULL);     
+    Assert(n != NULL && imp != NULL && m != NULL);
     extends = ex;
     if (extends) extends->SetParent(this);
     (implements=imp)->SetParentAll(this);
@@ -238,7 +238,7 @@ void InterfaceDecl::Check() {
     for (int i = 0, n = members->NumElements(); i < n; ++i)
         members->Nth(i)->Check();
 }
-	
+
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 /// FnDecl
@@ -252,7 +252,7 @@ FnDecl::FnDecl(Identifier *n, Type *r, List<VarDecl*> *d) : Decl(n) {
     body = NULL;
 }
 
-void FnDecl::SetFunctionBody(Stmt *b) { 
+void FnDecl::SetFunctionBody(Stmt *b) {
     (body=b)->SetParent(this);
 }
 
@@ -297,3 +297,15 @@ void FnDecl::Check() {
         body->Check();
 }
 
+bool FnDecl::ConflictsWithPrevious(Decl *prev) {
+ // special case error for method override
+    if (IsMethodDecl() && prev->IsMethodDecl() && parent != prev->GetParent()) {
+        if (!MatchesPrototype(dynamic_cast<FnDecl*>(prev))) {
+            ReportError::OverrideMismatch(this);
+            return true;
+        }
+        return false;
+    }
+    ReportError::DeclConflict(this, prev);
+    return true;
+}
