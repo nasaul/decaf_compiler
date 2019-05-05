@@ -1,7 +1,7 @@
 /* File: scope.cc
- * --------------     
- * Each Scope object tracks its own hashtable and 
- * may have additional information about the particulars for this 
+ * --------------
+ * Each Scope object tracks its own hashtable and
+ * may have additional information about the particulars for this
  * scope (class, fn, global, etc.)
  */
 
@@ -21,7 +21,7 @@ Scope::Scope()
  * Looks for an identifier in this scope only. Returns NULL if
  * not found.
  */
-Decl *Scope::Lookup(Identifier *id)       
+Decl *Scope::Lookup(Identifier *id)
 {
     return table->Lookup(id->GetName());
 }
@@ -35,7 +35,7 @@ Decl *Scope::Lookup(Identifier *id)
  */
 bool Scope::Declare(Decl *decl)
 {
-  Decl *prev = table->Lookup(decl->GetName());
+  Decl *prev = table->Lookup(decl->name());
   PrintDebug("scope", "Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->GetName(), prev);
   if (prev && decl->ConflictsWithPrevious(prev)) // throw away second, keep first
       return false;
@@ -51,4 +51,3 @@ void Scope::CopyFromScope(Scope *other, ClassDecl *addTo)
         table->Enter(decl->GetName(), decl);
     }
 }
-
