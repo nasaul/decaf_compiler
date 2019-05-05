@@ -39,7 +39,7 @@ bool Scope::Declare(Decl *decl)
   PrintDebug("scope", "Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->GetName(), prev);
   if (prev && decl->ConflictsWithPrevious(prev)) // throw away second, keep first
       return false;
-  table->Enter(decl->GetName(), decl);
+  table->Enter(decl->name(), decl);
   return true;
 }
 
