@@ -154,6 +154,7 @@ class FnDecl : public Decl
     void ScopeMake(Scope *parent);
     void Check();
     bool ConflictsWithPrevious(Decl *prev);
+    bool MatchesPrototype(FnDecl *other);
 };
 
 #endif
