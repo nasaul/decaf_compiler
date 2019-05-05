@@ -311,11 +311,11 @@ bool FnDecl::ConflictsWithPrevious(Decl *prev) {
 }
 
 bool FnDecl::MatchesPrototype(FnDecl *other) {
-    if (!returnType->IsEquivalentTo(other->returnType)) return false;
+    if (!returnType->IsEqualTo(other->returnType)) return false;
     if (formals->NumElements() != other->formals->NumElements())
         return false;
     for (int i = 0; i < formals->NumElements(); i++)
-        if (!formals->Nth(i)->GetDeclaredType()->IsEquivalentTo(other->formals->Nth(i)->GetDeclaredType()))
+        if (!formals->Nth(i)->GetDeclaredType()->IsEqualTo(other->formals->Nth(i)->GetDeclaredType()))
             return false;
     return true;
 }
