@@ -12,6 +12,9 @@
 class Decl;
 class Identifier;
 class ClassDecl;
+class LoopStmt;
+class SwitchStmt;
+class FnDecl;
 
 
 class Scope
