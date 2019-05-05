@@ -30,8 +30,7 @@ class Scope
     FnDecl *fnDecl;
 
   public:
-    Scope() : table(new Hashtable<Decl*>), classDecl(NULL), loopStmt(NULL),
-              fnDecl(NULL) {}
+    Scope();
 
     void SetParent(Scope *p) { parent = p; }
     Scope* GetParent() { return parent; }
