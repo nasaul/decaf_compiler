@@ -23,7 +23,7 @@ Scope::Scope()
  */
 Decl *Scope::Lookup(Identifier *id)
 {
-    return table->Lookup(id->GetName());
+    return table->Lookup(id->Name());
 }
 
 
@@ -36,7 +36,7 @@ Decl *Scope::Lookup(Identifier *id)
 bool Scope::Declare(Decl *decl)
 {
   Decl *prev = table->Lookup(decl->Name());
-  PrintDebug("scope", "Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->GetName(), prev);
+  PrintDebug("scope", "Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->Name(), prev);
   if (prev && decl->ConflictsWithPrevious(prev)) // throw away second, keep first
       return false;
   table->Enter(decl->Name(), decl);
@@ -48,6 +48,6 @@ void Scope::CopyFromScope(Scope *other, ClassDecl *addTo)
     Iterator<Decl*> iter = other->table->GetIterator();
     Decl *decl;
     while ((decl = iter.GetNextValue()) != NULL) {
-        table->Enter(decl->GetName(), decl);
+        table->Enter(decl->Name(), decl);
     }
 }
