@@ -51,6 +51,8 @@ class Scope
     int Add_Declaration(Decl *decl);
     friend std::ostream& operator<<(std::ostream& out, Scope *s);
     bool Declare(Decl *dec);
+    void CopyFromScope(Scope *other, ClassDecl *cd);
+    Decl *Lookup(Identifier *id);
 };
 
 #endif
