@@ -7,9 +7,9 @@
 
 #include <string.h>
 #include "scanner.h"
-#include "utility.h" // for PrintDebug()
+#include "utility.h"
 #include "errors.h"
-#include "parser.h" // for token codes, yylval
+#include "parser.h"
 #include "list.h"
 
 #define TAB_SIZE 8
@@ -20,7 +20,7 @@
  * preserved between calls to yylex or used outside the scanner.
  */
 static int curLineNum, curColNum;
-List<char*> savedLines;
+List<const char*> savedLines;
 
 static void DoBeforeEachAction(); 
 #define YY_USER_ACTION DoBeforeEachAction();
@@ -51,7 +51,7 @@ DOUBLE            ({INTEGER}"."{DIGIT}*{EXPONENT}?)
 BEG_STRING        (\"[^"\n]*)
 STRING            ({BEG_STRING}\")
 IDENTIFIER        ([a-zA-Z][a-zA-Z_0-9]*)
-OPERATOR          ([-+/*%=.,;!<>()[\]{}])
+OPERATOR          ([-+/*%=.,:;!<>()[\]{}])
 BEG_COMMENT       ("/*")
 END_COMMENT       ("*/")
 SINGLE_COMMENT    ("//"[^\n]*)
@@ -78,7 +78,6 @@ SINGLE_COMMENT    ("//"[^\n]*)
 <COMM>.                { /* ignore everything else that doesn't match */ }
 {SINGLE_COMMENT}       { /* skip to end of line for // comment */ }
 
-
  /* --------------------- Keywords ------------------------------- */
 "void"              { return T_Void;        }
 "int"               { return T_Int;         }
@@ -102,8 +101,9 @@ SINGLE_COMMENT    ("//"[^\n]*)
 "Print"             { return T_Print;       }
 "ReadInteger"       { return T_ReadInteger; }
 "ReadLine"          { return T_ReadLine;    }
-
-
+"switch"            { return T_Switch;      }
+"case"              { return T_Case;        }
+"default"           { return T_Default;     }
 
  /* -------------------- Operators ----------------------------- */
 "<="                { return T_LessEqual;   }
@@ -112,6 +112,8 @@ SINGLE_COMMENT    ("//"[^\n]*)
 "!="                { return T_NotEqual;    }
 "&&"                { return T_And;         }
 "||"                { return T_Or;          }
+"++"                { return T_Incr;        }
+"--"                { return T_Decr;        }
 {OPERATOR}          { return yytext[0];     }
     
 "[]"                { return T_Dims;        }
@@ -129,7 +131,6 @@ SINGLE_COMMENT    ("//"[^\n]*)
                          return T_StringConstant; }
 {BEG_STRING}        { ReportError::UntermString(&yylloc, yytext); }
 
-
  /* -------------------- Identifiers --------------------------- */
 {IDENTIFIER}        { if (strlen(yytext) > MaxIdentLen)
                          ReportError::LongIdentifier(&yylloc, yytext);
@@ -137,12 +138,10 @@ SINGLE_COMMENT    ("//"[^\n]*)
                        yylval.identifier[MaxIdentLen] = '\0';
                        return T_Identifier; }
 
-
  /* -------------------- Default rule (error) -------------------- */
 .                   { ReportError::UnrecogChar(&yylloc, yytext[0]); }
 
 %%
-
 
 /* Function: InitScanner
  * ---------------------
@@ -166,7 +165,6 @@ void InitScanner()
     curColNum = 1;
 }
 
-
 /* Function: DoBeforeEachAction()
  * ------------------------------
  * This function is installed as the YY_USER_ACTION. This is a place
@@ -176,10 +174,10 @@ void InitScanner()
  */
 static void DoBeforeEachAction()
 {
-   yylloc.first_line = curLineNum;
-   yylloc.first_column = curColNum;
-   yylloc.last_column = curColNum + yyleng - 1;
-   curColNum += yyleng;
+    yylloc.first_line = curLineNum;
+    yylloc.first_column = curColNum;
+    yylloc.last_column = curColNum + yyleng - 1;
+    curColNum += yyleng;
 }
 
 /* Function: GetLineNumbered()
@@ -190,8 +188,7 @@ static void DoBeforeEachAction()
  * retrieve them to report the context for errors.
  */
 const char *GetLineNumbered(int num) {
-   if (num <= 0 || num > savedLines.NumElements()) return NULL;
-   return savedLines.Nth(num-1); 
+    if (num <= 0 || num > savedLines.NumElements()) return NULL;
+    return savedLines.Nth(num-1); 
 }
-
 
